@@ -31,6 +31,10 @@ fn captures(req: HttpRequest) -> Result<fs::NamedFile> {
 #[get("from-bitly/{bitlyid}")]
 fn bit_ly(req: HttpRequest) -> HttpResponse {
     let bitly_id = req.match_info().get("bitlyid").unwrap();
+    const MAX_BITLY_ID_LENGTH: usize = 255;
+    if bitly_id.len() > MAX_BITLY_ID_LENGTH {
+        return HttpResponse::BadRequest().finish();
+    }
     let url = req.url_for("bitly", &[bitly_id]).unwrap();
     HttpResponse::Found()
         .header(header::LOCATION, url.into_string())
