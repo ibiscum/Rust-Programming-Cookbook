@@ -25,14 +25,14 @@ fn guarded_match(app: MyApp) -> String {
 fn destructuring_match(app: MyApp) -> String {
     match app {
         MyApp { user_type: UserType::Power, 
-                secret_user_id: uid, 
+                secret_user_id: _, 
                 theme: Background::Color(b1, b2, b3) } => 
-            format!("A power user with id >{}< and color background (#{:02x}{:02x}{:02x})", uid, b1, b2, b3),
+            format!("A power user with color background (#{:02x}{:02x}{:02x})", b1, b2, b3),
         MyApp { user_type: UserType::Power, 
-                secret_user_id: uid,      
+                secret_user_id: _,      
                 theme: Background::Image(path) } => 
-            format!("A power user with id >{}< and image background (path: {})", uid, path),
-        MyApp { user_type: _, secret_user_id: uid, .. } => format!("A regular user with id >{}<, individual backgrounds not supported", uid), 
+            format!("A power user with image background (path: {})", path),
+        MyApp { user_type: _, secret_user_id: _, .. } => format!("A regular user, individual backgrounds not supported"), 
     }
 }
 
