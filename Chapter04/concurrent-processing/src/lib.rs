@@ -20,7 +20,6 @@ pub fn ssqe(y: &[f32], y_predicted: &[f32]) -> Option<f32> {
     }
 }
 
-
 pub fn ssqe_sequential(y: &[f32], y_predicted: &[f32]) -> Option<f32> {
     if y.len() == y_predicted.len() {
         let y_iter = y.iter();
@@ -30,18 +29,16 @@ pub fn ssqe_sequential(y: &[f32], y_predicted: &[f32]) -> Option<f32> {
             y_iter
                 .zip(y_pred_iter)
                 .map(|(y, y_pred)| (y - y_pred).powi(2))
-                .sum()
-        ) 
+                .sum(),
+        )
     } else {
         None
     }
 }
 
-
 pub fn seq_count_alpha_nums(corpus: &str) -> usize {
     corpus.chars().filter(|c| c.is_alphanumeric()).count()
 }
-
 
 pub fn par_count_alpha_nums(corpus: &str) -> usize {
     corpus.par_chars().filter(|c| c.is_alphanumeric()).count()
@@ -74,7 +71,6 @@ mod tests {
             Some(4.0)
         );
     }
-
 
     #[test]
     fn test_sum_of_sq_errors_seq() {

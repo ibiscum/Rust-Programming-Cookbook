@@ -17,18 +17,16 @@ mod tests {
     fn loops() {
 
         let mut i = 42;
-        let mut broke = false;
-        
+
         // a basic loop with control statements
-        loop {
+        let broke = loop {
             i -= 1;
             if i < 2 {
-                broke = true;
-                break;
+                break true;
             } else if i > 2 {
                 continue;
             }
-        }
+        };
         assert!(broke);
 
         // loops and other constructs can be named for better readability ...
@@ -82,5 +80,50 @@ mod tests {
             }
         }
         assert_eq!(other_option, None)
+    }
+
+    #[test]
+    fn loop_break_returns_value() {
+        // Regression: ensure loop {} can return a computed value on break.
+        let value = loop {
+            break 42;
+        };
+        assert_eq!(value, 42);
+    }
+
+    #[test]
+    fn empty_range_does_not_execute() {
+        // Regression: an empty range should produce no iterations.
+        let mut count = 0;
+        for _ in 0..0 {
+            count += 1;
+        }
+        assert_eq!(count, 0);
+    }
+
+    #[test]
+    fn labeled_loop_breaks_outer() {
+        // Regression: labeled break should exit the outer loop immediately.
+        let mut outer_count = 0;
+        'outer: loop {
+            outer_count += 1;
+            loop {
+                break 'outer;
+            }
+        }
+        assert_eq!(outer_count, 1);
+    }
+
+    #[test]
+    fn while_let_counts_down_to_none() {
+        // Regression: while let should exhaust the option correctly.
+        let mut option = Some(3);
+        let mut iterations = 0;
+        while let Some(n) = option {
+            iterations += 1;
+            option = if n > 1 { Some(n - 1) } else { None };
+        }
+        assert_eq!(iterations, 3);
+        assert_eq!(option, None);
     }
 }

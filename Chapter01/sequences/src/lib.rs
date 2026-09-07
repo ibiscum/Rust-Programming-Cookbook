@@ -86,4 +86,42 @@ mod tests {
         assert_eq!(arr[0], 1);
         assert_eq!(mem::size_of_val(&arr), mem::size_of::<usize>() * 3);
     }
+
+    #[test]
+    fn vec_first_and_last() {
+        // Regression: first/last on an empty Vec should return None.
+        let empty: Vec<i32> = vec![];
+        assert_eq!(empty.first(), None);
+        assert_eq!(empty.last(), None);
+
+        let v = vec![10, 20, 30];
+        assert_eq!(v.first(), Some(&10));
+        assert_eq!(v.last(), Some(&30));
+    }
+
+    #[test]
+    fn tuple_mutable_member() {
+        // Regression: tuple member mutation should be observable.
+        let mut t = (1, 2, 3);
+        t.1 = 99;
+        assert_eq!(t, (1, 99, 3));
+    }
+
+    #[test]
+    fn array_length_and_iteration() {
+        // Regression: array length and iterator count should match.
+        let arr = [10, 20, 30];
+        assert_eq!(arr.len(), 3);
+        assert_eq!(arr.iter().sum::<i32>(), 60);
+    }
+
+    #[test]
+    #[should_panic(expected = "index out of bounds")]
+    fn array_out_of_bounds_panics() {
+        // Regression: out-of-bounds array access must panic at runtime.
+        // Black-box the index so the compiler cannot prove the panic at compile time.
+        let arr = [1, 2, 3];
+        let index = std::hint::black_box(10);
+        let _ = arr[index];
+    }
 }

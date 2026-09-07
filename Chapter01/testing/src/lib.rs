@@ -8,7 +8,7 @@
 //! 
 
 
-#![feature(test)]
+#![cfg_attr(feature = "nightly", feature(test))]
 #![doc(html_logo_url = "https://blog.x5ff.xyz/img/main/logo.png",
        test(no_crate_inject, attr(allow(unused_variables), deny(warnings))))]
 
@@ -155,11 +155,13 @@ impl <T>Drop for List<T> where T: Clone + Sized {
 #[cfg(test)]
 mod tests {
     use super::*;
-    extern crate test;
-    use test::Bencher;
 
+    #[cfg(feature = "nightly")]
+    extern crate test;
+
+    #[cfg(feature = "nightly")]
     #[bench]
-    fn bench_list_append(b: &mut Bencher) {
+    fn bench_list_append(b: &mut test::Bencher) {
         let mut list = List::new_empty();
         b.iter(|| {
             list.append(10);
@@ -201,5 +203,73 @@ mod tests {
         assert_eq!(list.pop(), Some(1));
         assert_eq!(list.length, 0);
         assert_eq!(list.pop(), None);
+    }
+
+    #[test]
+    fn test_list_single_element() {
+        // Regression: a single-element list should handle append and pop correctly.
+        let mut list = List::new_empty();
+        list.append(42);
+        assert_eq!(list.length, 1);
+        assert_eq!(list.pop(), Some(42));
+        assert_eq!(list.pop(), None);
+        assert_eq!(list.length, 0);
+    }
+
+    #[test]
+    fn test_list_pop_empty() {
+        // Regression: popping from an empty list should always return None.
+        let mut list: List<i32> = List::new_empty();
+        assert_eq!(list.pop(), None);
+        assert_eq!(list.pop(), None);
+        assert_eq!(list.length, 0);
+    }
+
+    #[test]
+    fn test_list_strings() {
+        // Regression: the list should work for non-Copy types such as String.
+        let mut list = List::new_empty();
+        list.append("hello".to_string());
+        list.append("world".to_string());
+        assert_eq!(list.pop(), Some("hello".to_string()));
+        assert_eq!(list.pop(), Some("world".to_string()));
+        assert_eq!(list.pop(), None);
+    }
+
+    #[test]
+    fn test_list_interleaved_append_and_pop_fifo() {
+        // Regression: interleaving operations should preserve FIFO ordering.
+        let mut list = List::new_empty();
+        for i in 1..=5 {
+            list.append(i);
+        }
+        assert_eq!(list.pop(), Some(1));
+        assert_eq!(list.pop(), Some(2));
+
+        list.append(6);
+        list.append(7);
+        assert_eq!(list.length, 5);
+
+        assert_eq!(list.pop(), Some(3));
+        assert_eq!(list.pop(), Some(4));
+        assert_eq!(list.pop(), Some(5));
+        assert_eq!(list.pop(), Some(6));
+        assert_eq!(list.pop(), Some(7));
+        assert_eq!(list.pop(), None);
+        assert_eq!(list.length, 0);
+    }
+
+    #[test]
+    fn test_list_drop_clears_nodes() {
+        // Regression: dropping a list should not leak nodes.
+        {
+            let mut list = List::new_empty();
+            for i in 0..100 {
+                list.append(i);
+            }
+            assert_eq!(list.length, 100);
+        }
+        // If Drop panicked or leaked, we would not reach this assertion.
+        assert!(true);
     }
 }

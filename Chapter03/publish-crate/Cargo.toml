@@ -3,7 +3,7 @@ name = "bubble-sort"
 description = "A quick and non-optimized, cloning version of the bubble sort algorithm. Created as a showcase for publishing crates in the Rust Cookbook 2018"
 version = "0.2.0"
 authors = ["Claus Matzinger <claus.matzinger+kb@gmail.com>"]
-edition = "2018"
+edition = "2024"
 homepage = "https://blog.x5ff.xyz"
 repository = "https://github.com/PacktPublishing/Rust-Cookbook"
 license = "MIT"
@@ -18,6 +18,6 @@ keywords = [
     "sort",
 ]
 readme = "README.md"
-maintenance = { status = "experimental" }
+# maintenance = { status = "experimental" }
 #azure-devops = { project = "...", pipeline = "...", build="2" }
 

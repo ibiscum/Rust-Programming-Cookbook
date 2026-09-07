@@ -26,15 +26,27 @@ impl ArbitraryType {
             v: vec![1,2,3,4]
         }
     }
+
+    pub fn values(&self) -> &[i32] {
+        &self.v
+    }
 }
 impl Loggable for ArbitraryType {}
 
 #[derive(Debug)]
 struct AnotherType(usize);
 
+impl AnotherType {
+    pub fn value(&self) -> usize {
+        self.0
+    }
+}
+
 fn main() {
     let a = ArbitraryType::new();
+    println!("v = {:?}", a.values());
     a.log();
     let b = AnotherType(2);
+    println!("usize = {}", b.value());
     log_debug(b);
 }

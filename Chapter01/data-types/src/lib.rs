@@ -2,7 +2,7 @@
 // Rust allows another macro type: derive. It allows to "auto-implement"
 // supported traits. Clone, Debug, Copy are typically handy to derive.
 #[derive(Clone, Debug, Copy)]
-struct MyCustomStruct {
+pub struct MyCustomStruct {
     a: i32,
     b: u32,
     pub c: f32,
@@ -105,5 +105,52 @@ mod tests {
         //    let _ = a - b;
         //             ^^^^^ attempt to compute `10_u32 - 11_u32`, which would overflow
         let _ = a - b;
+    }
+
+    #[test]
+    fn sum_with_negative_and_large_values() {
+        let m = MyCustomStruct::new(-100, 200, 0.5);
+        assert_eq!(m.sum(), 100.5);
+    }
+
+    #[test]
+    fn sum_with_zeros() {
+        let m = MyCustomStruct::new(0, 0, 0.0);
+        assert_eq!(m.sum(), 0.0);
+    }
+
+    #[test]
+    fn copy_does_not_create_alias() {
+        // Regression: Copy should produce an independent value.
+        let original = MyCustomStruct::new(1, 2, 3.0);
+        let mut copy = original;
+        copy.a = 999;
+        assert_eq!(original.a, 1);
+        assert_eq!(copy.a, 999);
+    }
+
+    #[test]
+    fn clone_equals_original() {
+        let m = MyCustomStruct::new(7, 8, 9.5);
+        let cloned = m.clone();
+        assert_eq!(m.a, cloned.a);
+        assert_eq!(m.b, cloned.b);
+        assert_eq!(m.c, cloned.c);
+    }
+
+    #[test]
+    fn sum_boundary_integer_values() {
+        // Regression: conversion and sum should handle extreme integer values.
+        let max_case = MyCustomStruct::new(i32::MAX, 0, 0.0);
+        let min_case = MyCustomStruct::new(i32::MIN, 0, 0.0);
+        assert_eq!(max_case.sum(), i32::MAX as f32);
+        assert_eq!(min_case.sum(), i32::MIN as f32);
+    }
+
+    #[test]
+    fn sum_mixed_sign_values() {
+        // Regression: signed/unsigned/float fields should combine predictably.
+        let m = MyCustomStruct::new(-1, 2, -0.5);
+        assert_eq!(m.sum(), 0.5);
     }
 }

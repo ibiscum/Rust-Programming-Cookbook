@@ -17,23 +17,15 @@ pub enum ErrorWrapper {
     Agent(UnexpectedDeviceStateError)
 }
 
-impl Error for ErrorWrapper {
-    fn description(&self) -> &str {
-        match *self {
-            ErrorWrapper::Io(ref e) => e.description(),
-            ErrorWrapper::Db(_) | ErrorWrapper::Device(_) => "No device present with this id, check formatting.",
-            _ => "Unexpected error. Sorry for the inconvenience."
-        }
-    }
-}
+impl Error for ErrorWrapper {}
 
 impl fmt::Display for ErrorWrapper {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
-            ErrorWrapper::Io(ref e) => write!(f, "{} [{}]", e, self.description()), 
-            ErrorWrapper::Db(ref e) => write!(f, "Device with id \"{}\" not found [{}]", e.0, self.description()),
-            ErrorWrapper::Device(ref e) => write!(f, "Device with id \"{}\" is currently unavailable [{}]", e.0, self.description()),
-            ErrorWrapper::Agent(_) => write!(f, "Unexpected device state [{}]", self.description())
+            ErrorWrapper::Io(ref e) => write!(f, "{}", e), 
+            ErrorWrapper::Db(ref e) => write!(f, "Device with id \"{}\" not found", e.0),
+            ErrorWrapper::Device(ref e) => write!(f, "Device with id \"{}\" is currently unavailable", e.0),
+            ErrorWrapper::Agent(_) => write!(f, "Unexpected device state")
         }
     }
 }

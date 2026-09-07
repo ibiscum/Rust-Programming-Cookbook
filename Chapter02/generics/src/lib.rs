@@ -117,7 +117,6 @@ where
 mod tests {
     use super::*;
 
-
     #[test]
     fn dynamic_array_clone() {
         let mut list = DynamicArray::new_empty();
@@ -126,11 +125,10 @@ mod tests {
         list2.append(42.0);
         assert_eq!(list[0], Some(3.14));
         assert_eq!(list[1], None);
-        
+
         assert_eq!(list2[0], Some(3.14));
         assert_eq!(list2[1], Some(42.0));
     }
-
 
     #[test]
     fn dynamic_array_index() {
@@ -153,9 +151,7 @@ mod tests {
 
         assert_eq!(list.at(0).unwrap().at(0), Some(3.14));
         assert_eq!(list[0].as_ref().unwrap()[0], Some(3.14));
-
     }
-
 
     #[test]
     fn dynamic_array_append() {

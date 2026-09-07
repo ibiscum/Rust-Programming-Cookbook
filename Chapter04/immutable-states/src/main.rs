@@ -1,5 +1,4 @@
 use std::thread;
-use std::rc::Rc;
 use std::sync::Arc;
 use std::sync::mpsc::channel;
 
@@ -7,7 +6,7 @@ use std::sync::mpsc::channel;
 fn noop<T>(_: T) {}
 
 fn main() {
-    let (sender, receiver) = channel::<usize>();
+    let (sender, _receiver) = channel::<usize>();
 
     thread::spawn(move || {
         let thread_local_read_only_clone = sender.clone();
@@ -15,7 +14,7 @@ fn main() {
     });
 
     
-    let b = Arc::new(Rc::new(vec![]));
+    let b: Arc<Vec<usize>> = Arc::new(vec![]);
     thread::spawn(move || {
         let thread_local_read_only_clone = b.clone();
         noop(thread_local_read_only_clone);

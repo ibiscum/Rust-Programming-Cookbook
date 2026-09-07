@@ -18,7 +18,6 @@ impl fmt::Display for MyError {
     }
 }
 
-
 fn main() {
     println!("Display: {}", MyError{ code: 1535 });
     println!("Debug: {:?}", MyError{ code: 42 });

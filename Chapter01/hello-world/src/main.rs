@@ -1,6 +1,21 @@
 use std::io::{self, Write};
 use std::f64;
 
+/// Formats a number with the given precision.
+pub fn format_with_precision(value: f64, precision: usize) -> String {
+    format!("{value:.precision$}", value = value, precision = precision)
+}
+
+/// Formats a number as zero-padded hex with the given width.
+pub fn format_padded_hex(value: usize, width: usize) -> String {
+    format!("{value:0width$x}", value = value, width = width)
+}
+
+/// Formats a number as right-aligned decimal with the given width.
+pub fn format_padded_decimal(value: usize, width: usize) -> String {
+    format!("{value:>width$}", value = value, width = width)
+}
+
 fn main() {
     // Basic printing with arguments
     println!("Let's print some lines:");
@@ -35,6 +50,33 @@ fn main() {
     else {
         // Printing to std::err
         eprintln!("There was an error :(");
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn precision_formatting() {
+        assert_eq!(format_with_precision(f64::consts::PI, 3), "3.142");
+        assert_eq!(format_with_precision(f64::consts::PI, 0), "3");
+    }
+
+    #[test]
+    fn padded_hex_formatting() {
+        assert_eq!(format_padded_hex(1535, 5), "005ff");
+    }
+
+    #[test]
+    fn padded_decimal_formatting() {
+        assert_eq!(format_padded_decimal(1535, 5), " 1535");
+    }
+
+    #[test]
+    fn precision_regression_zero() {
+        // Regression: formatting zero with any precision should stay zero.
+        assert_eq!(format_with_precision(0.0, 5), "0.00000");
     }
 }
 

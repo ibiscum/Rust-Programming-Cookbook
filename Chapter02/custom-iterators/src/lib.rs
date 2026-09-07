@@ -7,7 +7,6 @@
 //!  - Writing tests and benchmarks
 //!
 
-#![feature(test)]
 #![doc(
     html_logo_url = "https://blog.x5ff.xyz/img/main/logo.png",
     test(no_crate_inject, attr(allow(unused_variables), deny(warnings)))

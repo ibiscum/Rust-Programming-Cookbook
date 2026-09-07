@@ -2,13 +2,13 @@
 name = "custom-build"
 version = "0.1.0"
 authors = ["Claus Matzinger <claus.matzinger+kb@gmail.com>"]
-edition = "2018"
+edition = "2024"
 
 [dependencies]
 
 
 # Let's modify the release build
-[profile.release]
-opt-level = 2
-incremental = true # default is false
-overflow-checks = true
+# [profile.release]
+# opt-level = 2
+# incremental = true # default is false
+# overflow-checks = true

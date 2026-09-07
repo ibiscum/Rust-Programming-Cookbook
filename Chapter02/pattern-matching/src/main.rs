@@ -39,7 +39,7 @@ fn destructuring_match(app: MyApp) -> String {
 fn literal_match(choice: usize) -> String {
     match choice {
         0 | 1 => "zero or one".to_owned(),
-        2 ... 9 => "two to nine".to_owned(),
+        2..=9 => "two to nine".to_owned(),
         10 => "ten".to_owned(),
         _ => "anything else".to_owned()
     }

@@ -54,6 +54,31 @@ With the following software and hardware list you can run all code files present
 | 6 | gcc >= 9.2 | Windows/Linux/macOS |
 | 7 | Rust stable > 1.38.0 | Windows/Linux/macOS |
 
+## Workspace setup in this repository
+
+This repository now includes a top-level Cargo workspace manifest at [Cargo.toml](Cargo.toml).
+
+Workspace members are generated automatically using [scripts/regenerate-workspace.sh](scripts/regenerate-workspace.sh):
+
+```bash
+./scripts/regenerate-workspace.sh
+```
+
+You can also run the Make shortcut from [Makefile](Makefile):
+
+```bash
+make workspace-refresh
+```
+
+How generation works:
+- Includes every subproject that has a Cargo.toml with a [package] section.
+- Builds default-members from projects that contain src/main.rs.
+- Handles duplicate package names by keeping the first one found (sorted path order) and printing a warning for skipped duplicates.
+
+Why duplicate handling is needed:
+- Cargo workspaces cannot contain two members with the same package name.
+- In this repository, multiple Chapter07 projects use the package name rust-digest.
+
 We also provide a PDF file that has color images of the screenshots/diagrams used in this book. [Click here to download it](https://static.packt-cdn.com/downloads/9781789530667_ColorImages.pdf).
 
 ### Related products
